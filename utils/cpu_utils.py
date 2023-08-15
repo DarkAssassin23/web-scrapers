@@ -9,7 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
 from multiprocessing import Process, Queue
-import os, time
+import os, time, random
 
 numCPUs = os.cpu_count()
 processes = []
@@ -77,7 +77,7 @@ def getOverallScore(soup, cpuDict):
 def getTDP(data, numPhysicalCPUs):
     for item in data:
         if("Typical TDP" in item.text):
-            # Some Apple CPUs have decimals in their wattages  
+            # Some CPUs have decimals in their wattages  
             tdp = int(round(float(item.text.split(":")[1].strip().split(" ")[0]))) * numPhysicalCPUs
             # Some CPUs have a negative tdp some how?
             # Ex. Intel Core2 Duo E8335 @ 2.66GHz (as of Aug. 8, 2023)
@@ -166,7 +166,6 @@ def getDetails(soup, numPhysicalCPUs, cpuDict):
     if(len(cpuDict["Name"]) > len(cpuDict["Turbo Speed (GHz)"])):
         cpuDict["Turbo Speed (GHz)"].append("N/A")
     if(len(cpuDict["Name"]) > len(cpuDict["Clockspeed (GHz)"])):
-        print("Setting Clockspeed of "+cpuDict["Name"][-1]+" to N/A")
         cpuDict["Clockspeed (GHz)"].append("N/A")
 
 # Adds a ranking based on overall score and
@@ -199,15 +198,6 @@ def rankCPUs(cpuDict):
             cpuDict["Single Threaded Rank"][x] = "N/A"
         else:
             cpuDict["Single Threaded Rank"][x] = singleThreadScores.index(int(cpuDict["Single Thread Rating"][x]))+1
-
-# Fills in any blanks in data after the
-# CPUs data has been gathered
-def fillGaps(cpuDict):
-    # Make sure all categories were filled out
-    targetLen = len(cpuDict["Name"])
-    for k,v in cpuDict.items():
-        while(targetLen>len(v)):
-            cpuDict[k].append("N/A")
 
 # Wait for page to load in the table, the table will be loaded 
 # when the td tag with the class details-control is visable
@@ -284,7 +274,7 @@ def gatherResults(cpus, queue, verbose=False):
     try:
         for cpu in cpus:
             currentCPU = cpu
-            result = get(cpu)#get(baseURL+cpu)
+            result = get(cpu)
             soup = bs(result.content, "html.parser")
 
             sup = soup.find_all('sup')
