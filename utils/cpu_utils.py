@@ -8,8 +8,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
+from utils.utils import *
 from multiprocessing import Process, Queue
-import os, time, random
+import os, time
 
 numCPUs = os.cpu_count()
 processes = []
@@ -199,20 +200,6 @@ def rankCPUs(cpuDict):
         else:
             cpuDict["Single Threaded Rank"][x] = singleThreadScores.index(int(cpuDict["Single Thread Rating"][x]))+1
 
-# Wait for page to load in the table, the table will be loaded 
-# when the td tag with the class details-control is visable
-# we wait until we find that
-def waitForPageToLoad(browser, retrys=0):
-    if(retrys >= 10):
-        print(f"Unable to find element on the page after {retrys} retrys. Exiting...")
-        exit()
-    try:
-        delay = 1
-        myElem = WebDriverWait(browser, delay).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'td[class=" details-control"]')))
-    except TimeoutException:
-        waitForPageToLoad(browser, (retrys + 1))
-
-
 # Using the selenium webdriver, it opens a firefox session
 # finds the selector to show all CPUs then pulls all their URLS
 # and returns the result
@@ -231,7 +218,7 @@ def getAllCPULinks(verbose=False):
         browser.quit()
         exit()
 
-    waitForPageToLoad(browser)
+    waitForPageToLoad(browser, 'td[class=" details-control"]')
 
     html = browser.page_source
     browser.quit()
