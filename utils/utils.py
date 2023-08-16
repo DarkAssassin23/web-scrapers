@@ -5,7 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
-import csv
+import csv, os
 # Exports the data dictionary to the specified
 # csv file
 def exportToCSV(dict, csvFileName):
@@ -31,3 +31,39 @@ def waitForPageToLoad(browser, css_element, retrys=0):
         myElem = WebDriverWait(browser, delay).until(EC.presence_of_element_located((By.CSS_SELECTOR, css_element)))
     except TimeoutException:
         waitForPageToLoad(browser, css_element, (retrys + 1))
+
+# Checks to see if the provided file exists
+def validFile(filename):
+    if(not os.path.exists(filename)):
+        print("Error: Could not find the file specified.")
+        print("File \'"+filename+"\' does not exist")
+        return False
+    return True
+
+# Save the links downloaded from a website to a file
+def saveLinks(links, filename):
+    try:
+        with open(filename, "w") as f:
+            for link in links:
+                f.write(f'{link}\n')
+    except:
+        print(f"An error occurred writing to the file \'{filename}\'")
+
+# Load the links downloaded from a website into a list
+def loadLinks(filename):
+    links = []
+    if(not validFile(filename)):
+        return links
+
+    contents = []
+    
+    try:
+        with open(filename, "r") as f:
+            contents = f.readlines()
+    except:
+        print(f"An error occurred reading from the file \'{filename}\'")    
+
+    for link in contents:
+        links.append(link.strip())
+
+    return links
