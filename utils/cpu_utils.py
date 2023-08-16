@@ -280,8 +280,6 @@ def gatherResults(cpus, queue, verbose=False):
         return cpuDict
     except:
         print("\nAn error occurred gathering CPU data on the following CPU \'"+currentCPU+"\'.")
-        print("Make sure the CPU is valid and/or formatted correctly")
-        print("To see examples of correct formatting, add the \'-e\' flag\n")
         queue.put(None)
     
 # Evenly splits the number of cpu's to get by
