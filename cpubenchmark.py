@@ -60,6 +60,7 @@ if __name__ == "__main__":
 
         print("done.")
         print("Finished in: "+str(finalTime)+" seconds")
-        
+    except KeyboardInterrupt:
+        print("\nExiting...")
     except:
         print("\nAn error occurred during processing")

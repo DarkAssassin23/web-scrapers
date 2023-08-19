@@ -182,6 +182,8 @@ def gatherResults(gpus, queue, verbose=False):
             result = get(gpu)
             soup = bs(result.content, "html.parser")
             getDetails(soup, gpuDict, verbose)
+        except KeyboardInterrupt:
+            exit()
         except:
             print("\nAn error occurred gathering GPU data on the following GPU \'"+currentGPU+"\'.")
 

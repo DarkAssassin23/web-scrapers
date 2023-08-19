@@ -258,9 +258,9 @@ def gatherResults(cpus, queue, verbose=False):
     "Cores":[],
     "Threads":[]
     }
-    try:
-        for cpu in cpus:
-            currentCPU = cpu
+    for cpu in cpus:
+        currentCPU = cpu
+        try:
             result = get(cpu)
             soup = bs(result.content, "html.parser")
 
@@ -275,12 +275,14 @@ def gatherResults(cpus, queue, verbose=False):
             getOverallScore(soup, cpuDict)
             getSingleThreadedScore(soup, cpuDict)
             getDetails(soup, numPhysicalCPUs, cpuDict)
+        except KeyboardInterrupt:
+            exit()
+        except:
+            print("\nAn error occurred gathering CPU data on the following CPU \'"+currentCPU+"\'.")
 
-        queue.put(cpuDict)
-        return cpuDict
-    except:
-        print("\nAn error occurred gathering CPU data on the following CPU \'"+currentCPU+"\'.")
-        queue.put(None)
+    queue.put(cpuDict)
+    return cpuDict
+
     
 # Evenly splits the number of cpu's to get by
 # the desired number of processes to run, up to
