@@ -1,28 +1,29 @@
 #!/usr/bin/env python3
-import csv, os, argparse, time
+import csv, os, argparse, time, sys
 
-from utils.cpu_utils import *
+sys.path.append('../')
+
+from utils.gpu_utils import *
 from utils.utils import *
 
 # Default csv file
-csvFileName = "cpuData.csv"
+csvFileName = "gpuData.csv"
 numPhysicalCPUs = 1
-cpuDataDict = {
+gpuDataDict = {
     "Name":[],
-    "CPU Class":[],
-    "Socket":[],
-    "Launched":[],
-    "Overall Score":[],
-    "Single Thread Rating":[],
-    "Clockspeed (GHz)":[],
-    "Turbo Speed (GHz)":[],
+    "GPU Class":[],
+    "First Tested":[],
+    "G3D Mark Score":[],
+    "G2D Mark Score":[],
+    "Max Memory (MB)":[],
+    "Core Clock(s) (MHz)":[],
+    "Memory Clock(s) (MHz)":[],
     "TDP (W)":[],
-    "Cores":[],
-    "Threads":[]
-    }
+    "Bus Interface":[]
+}
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Web scraper to pull CPU data from cpubenchmark.net')
+    parser = argparse.ArgumentParser(description='Web scraper to pull GPU data from videocardbenchmark.net')
     parser.add_argument('-o', nargs=1, metavar="file", help="output file to save data to")
     parser.add_argument('-p', nargs='?', type=int, const=numCPUs, metavar="processes",
         help="the number of processes you would like to run. If left blank, it will run with the maximum number of available CPUs")
@@ -43,23 +44,23 @@ if __name__ == "__main__":
     try:
         start = time.time()
 
-        cpuLinks = getAllCPULinks(verbose)
+        gpuLinks = getAllGPULinks(verbose)
 
         if(verbose):
-            print("Gathering CPU Data")
+            print("Gathering GPU Data")
         if(singleThreaded):
-            cpuDataDict = gatherResults(cpuLinks, Queue(1), verbose)
+            gpuDataDict = gatherResults(gpuLinks, Queue(1), verbose)
         else:
-            cpuDataDict = multiProcess(cpuLinks, cpusToUse, verbose)
-        
+            gpuDataDict = multiProcess(gpuLinks, cpusToUse, verbose)
+
         if(verbose):
-            print("Ranking CPUs")
-        rankCPUs(cpuDataDict)
-        exportToCSV(cpuDataDict, csvFileName)
+            print("Ranking GPUs")
+        rankGPUs(gpuDataDict)
+        exportToCSV(gpuDataDict, csvFileName)
         finalTime = time.time() - start
 
         print("done.")
-        print("Finished in: "+str(finalTime)+" seconds")
+        print(f"Finished in: {finalTime} seconds")
     except KeyboardInterrupt:
         print("\nExiting...")
     except:
