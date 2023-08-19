@@ -6,6 +6,8 @@ A collection of web scrapers, written in python, to scrape data from the
 following sites:
  - [cpubenchmark.net](https://cpubenchmark.net)
    - Scrapes data from every CPU on the site
+ - [videocardbenchmark.net](https://videocardbenchmark.net)
+   - Scrapes data from every GPU on the site
 
 Setup
 ---------
@@ -67,5 +69,5 @@ By default, it will use all available CPU's
 ./cpubenchmark.py -p
 ```
 ```bash
-./cpubenchmark.py -o CPU_Data/CPUsData.csv -p 6
+./gpubenchmark.py -o GPU_Data/GPUsData.csv -p 6
 ```
