@@ -39,38 +39,26 @@ if __name__ == "__main__":
         singleThreaded = False
     verbose = args.v
 
-    # try:
-    start = time.time()
+    try:
+        start = time.time()
 
-    # gpuLinks = getAllGPULinks(verbose)
-    # saveLinks(gpuLinks, "gpu_links.txt")
-    gpuLinks = loadLinks("gpu_links.txt")
+        gpuLinks = getAllGPULinks(verbose)
 
-    # For random testing
-    # start = random.randint(0, (len(gpuLinks)-30))
-    # gpuLinks = gpuLinks[start:(start+25)]
-    tmp = []
-    for _ in range(0,20):
-        gpu = random.randint(0, (len(gpuLinks)))
-        tmp.append(gpuLinks[gpu])
-    gpuLinks = tmp
+        if(verbose):
+            print("Gathering GPU Data")
+        if(singleThreaded):
+            gpuDataDict = gatherResults(gpuLinks, Queue(1), verbose)
+        else:
+            gpuDataDict = multiProcess(gpuLinks, cpusToUse, verbose)
 
-    if(verbose):
-        print("Gathering GPU Data")
-    if(singleThreaded):
-        gpuDataDict = gatherResults(gpuLinks, Queue(1), verbose)
-    else:
-        gpuDataDict = multiProcess(gpuLinks, cpusToUse, verbose)
+        if(verbose):
+            print("Ranking GPUs")
+        rankGPUs(gpuDataDict)
+        exportToCSV(gpuDataDict, csvFileName)
+        finalTime = time.time() - start
 
-    print(gpuDataDict)
-    if(verbose):
-        print("Ranking GPUs")
-    rankGPUs(gpuDataDict)
-    exportToCSV(gpuDataDict, csvFileName)
-    finalTime = time.time() - start
-
-    print("done.")
-    print(f"Finished in: {finalTime} seconds")
+        print("done.")
+        print(f"Finished in: {finalTime} seconds")
         
-    # except:
-    #     print("\nAn error occurred during processing")
+    except:
+        print("\nAn error occurred during processing")

@@ -175,18 +175,18 @@ def gatherResults(gpus, queue, verbose=False):
     "TDP (W)":[],
     "Bus Interface":[]
     }
-    # try:
+
     for gpu in gpus:
         currentGPU = gpu
-        result = get(gpu)
-        soup = bs(result.content, "html.parser")
-        getDetails(soup, gpuDict, verbose)
+        try:
+            result = get(gpu)
+            soup = bs(result.content, "html.parser")
+            getDetails(soup, gpuDict, verbose)
+        except:
+            print("\nAn error occurred gathering GPU data on the following GPU \'"+currentGPU+"\'.")
 
     queue.put(gpuDict)
     return gpuDict
-    # except:
-    #     print("\nAn error occurred gathering GPU data on the following GPU \'"+currentGPU+"\'.")
-    #     queue.put(None)
     
 # Evenly splits the number of cpu's to get by
 # the desired number of processes to run, up to
