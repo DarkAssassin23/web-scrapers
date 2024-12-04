@@ -54,6 +54,8 @@ or
 ```bash
 python cpubenchmark.py
 ```
+> [!NOTE]
+> Make sure you are in the `scrapers` directory
 
 Additionally, you can specify your own output file by tacking on a 
 `-o` flag. This will tell the script to use that output file rather than the
