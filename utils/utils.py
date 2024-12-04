@@ -6,6 +6,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
 import csv, os
+# Get the headers (specifically user agent) for the http get request
+def getHeaders():
+    return {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0'}
+
 # Exports the data dictionary to the specified
 # csv file
 def exportToCSV(dict, csvFileName):
