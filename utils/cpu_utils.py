@@ -32,10 +32,13 @@ def getCPUName(soup, cpuDict, verbose = False):
 # Extracts the single thread rating of the CPU from the website
 def getSingleThreadedScore(soup, cpuDict):
     data = soup.find("div", {"class":"right-desc"}).text
+    isNext = False
     for item in data.strip().split("\n"):
-        if(item.split(":")[0] == "Single Thread Rating"):
-            cpuDict[item.split(":")[0]].append(item.split(":")[1].strip())
+        if(isNext == True):
+            cpuDict["Single Thread Rating"].append(item.strip())
             return
+        if("Single Thread Rating" in item):
+            isNext = True
     cpuDict["Single Thread Rating"].append("N/A")
 
 # Extracts the class of the CPU from the website
@@ -68,11 +71,14 @@ def getTimeOfRelease(soup, cpuDict):
 
 # Extracts the Overall Score of the CPU from the website
 def getOverallScore(soup, cpuDict):
-    data = soup.find("div", {"class":"right-desc"}).find_all("span")
-    for item in data:
-        if(item.text.isdigit()):
-            cpuDict["Overall Score"].append(item.text)
+    data = soup.find("div", {"class":"right-desc"}).text
+    isNext = False
+    for item in data.strip().split("\n"):
+        if(isNext == True):
+            cpuDict["Overall Score"].append(item.split()[0].strip())
             return
+        if("Multithread Rating" in item):
+            isNext = True
 
 # Extracts the Typical TDP usage of the CPU
 def getTDP(data, numPhysicalCPUs):
@@ -183,7 +189,6 @@ def rankCPUs(cpuDict):
             singleThreadScores.append(int(cpuDict["Single Thread Rating"][x]))
         else:
             singleThreadScores.append(0)
-
     overallScores.sort(reverse=True)
     singleThreadScores.sort(reverse=True)
 
@@ -261,7 +266,8 @@ def gatherResults(cpus, queue, verbose=False):
     for cpu in cpus:
         currentCPU = cpu
         try:
-            result = get(cpu)
+            headers = getHeaders()
+            result = get(cpu, headers=headers)
             soup = bs(result.content, "html.parser")
 
             sup = soup.find_all('sup')
