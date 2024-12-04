@@ -179,7 +179,8 @@ def gatherResults(gpus, queue, verbose=False):
     for gpu in gpus:
         currentGPU = gpu
         try:
-            result = get(gpu)
+            headers = getHeaders()
+            result = get(gpu, headers=headers)
             soup = bs(result.content, "html.parser")
             getDetails(soup, gpuDict, verbose)
         except KeyboardInterrupt:
